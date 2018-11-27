@@ -13,16 +13,16 @@
 git clone git@github.com:akadim/fend-project-memory-game.git
 ```
 
-- To Test the game, just open the file index.html and try to click on any black square to see it flipped.
+- And then open the file `index.html` and try to click on any black square to see it flipped.
 
-- The main styles exist in the file css/app.css
+- The main styles exist in the file `css/app.css`
 
 - Dependencies used: 
-      * Animate.css located in libs/dependencies/animate.css and used for adding some animation effects to the cards
+      * Animate.css located in `libs/dependencies/animate.css` and used for adding some animation effects to the cards
       * Font Awesome for adding the symbols to the cards
       * Google Fonts for adding the Font Style 'Coda'
 
-- All the Javascript codes are in js/app.js written with pure Vanilla Javascript, no Third Party librairies Involved 
+- All the Javascript codes are in `js/app.js` written with pure Vanilla Javascript, no Third Party librairies Involved 
 
 ## Contributing
 
