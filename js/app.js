@@ -1,29 +1,42 @@
 /*
  * Create a list that holds all of your cards
  */
-let cardList= ['diamond', 'paper-plane-o', 'anchor', 'bolt', 'leaf', 'bicycle', 'bomb', 'cube','diamond', 'paper-plane-o', 'anchor', 'bolt', 'leaf', 'bicycle', 'bomb', 'cube'];
+const symbols = ['diamond', 'paper-plane-o', 'anchor', 'bolt', 'leaf', 'bicycle', 'bomb', 'cube'];
+let cardList = [...symbols, ...symbols];
+
+/*
+ * list of the shown Cards (it shouldn't exceed 2)
+ */
+
+let shownInfoCards = [];
+
+/*
+ * Number of the Shown Cards (it shouldn't surpass 2)
+ */
+
+let shownCards = 0;
 
 /**
  * Number of moves
  */
- let numberOfMoves = 0;
+let numberOfMoves = 0;
 
 /**
  * Number of stars
  */
- let numberOfStars = 3; 
+let numberOfStars = 3;
 
- /**
-  * Number of the cards on the deck
-  */
- const numberOfCards = 16;
+/**
+ * Number of the cards on the deck
+ */
+const numberOfCards = 16;
 
- /**
-  * for registering the Star time of the game
-  */
- let startTime = new Date();
+/**
+ * for registering the Star time of the game
+ */
+let startTime = new Date();
 
- let startTimeInterval = null;
+let startTimeInterval = null;
 
 /*
  * Display the cards on the page
@@ -51,42 +64,50 @@ function shuffle(array) {
  * Update the number of the Displayed Stars 
  */
 function updateStars(numberOfStars) {
-     
-     // Creating the stars container object
-	let stars = document.querySelector('.stars');
+
+    // Creating the stars container object
+    let stars = document.querySelector('.stars');
 
     stars.innerHTML = '';
 
-    for(let i=1; i <= numberOfStars; i++) {
-  	   let starItem = document.createElement('li');
-       let starContent = document.createElement('i');
-       starContent.classList.add('fa', 'fa-star');
-       starItem.appendChild(starContent);
-       stars.appendChild(starItem); 
+    for (let i = 1; i <= numberOfStars; i++) {
+        let starItem = document.createElement('li');
+        let starContent = document.createElement('i');
+        starContent.classList.add('fa', 'fa-star');
+        starItem.appendChild(starContent);
+        stars.appendChild(starItem);
     }
 }
 
 function updateMoves(numberOfMoves) {
-	document.querySelector('.moves').innerHTML = numberOfMoves;
+    document.querySelector('.moves').innerHTML = numberOfMoves;
 }
 
 function startTheGame() {
 
-	 // Shuffling the cards
-	 cardList = shuffle(cardList);
+    // Shuffling the cards
+    cardList = shuffle(cardList);
 
-	 clearInterval(startTimeInterval);
-     
-     // Initializing the timer
-     startTime = new Date();
-	 startTimeInterval = displayTimer(startTime);
-     
-     // Initiliazing the number of stars & moves
-	 updateStars(3);
-	 updateMoves(0);
+    clearInterval(startTimeInterval);
 
-     // displaying the decks
-	 displayCards(cardList);
+    // Initializing the timer
+    startTime = new Date();
+    startTimeInterval = displayTimer(startTime);
+
+    // Initializing the Cards Classes
+
+    document.querySelectorAll('.card').forEach((selectedCard) => {
+        selectedCard.classList.remove('bounceIn', 'animated');
+    });
+
+    // Initiliazing the number of stars & moves
+    numberOfMoves = 0;
+    numberOfStars = 3;
+    updateStars(3);
+    updateMoves(0);
+
+    // displaying the decks
+    displayCards(cardList);
 }
 
 function timeDiff(startDate, endDate) {
@@ -99,11 +120,11 @@ function timeDiff(startDate, endDate) {
 }
 
 function displayTimer(startTime) {
-     var timerInterval = setInterval(function(){
-         document.querySelector('.timer').innerHTML = timeDiff(startTime, new Date());
-     }, 1000);
+    var timerInterval = setInterval(function () {
+        document.querySelector('.timer').innerHTML = timeDiff(startTime, new Date());
+    }, 1000);
 
-     return timerInterval;
+    return timerInterval;
 }
 
 function timeDiff(startDate, endDate) {
@@ -112,112 +133,142 @@ function timeDiff(startDate, endDate) {
     let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     let seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    return (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes + ':' +  (seconds <= 9 ? "0" : "") + seconds;
+    return (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes + ':' + (seconds <= 9 ? "0" : "") + seconds;
 }
 
 /**
  * Show the Result Modal
  */
 function showResults(numberOfMoves, numberOfStars) {
-	document.querySelector('.modal-wrapper').classList.remove('is-hidden');
-	document.querySelector('.time-difference').innerHTML = timeDiff(startTime, new Date());
-	document.querySelector('.display_num_moves').innerHTML = numberOfMoves;
+    document.querySelector('.modal-wrapper').classList.remove('is-hidden');
+    document.querySelector('.time-difference').innerHTML = timeDiff(startTime, new Date());
+    document.querySelector('.display_num_moves').innerHTML = numberOfMoves;
     document.querySelector('.display_num_stars').innerHTML = numberOfStars;
 }
 
 
-function showCard (element) {
-       if(!element.classList.contains('match')) {
-       	  element.classList.add('open', 'show');
+function showCard(element) {
+    if (!element.classList.contains('match') && !element.classList.contains('show')) {
+        element.classList.add('open', 'show');
 
-	       // Get the number of the shown cards
-	       let shownCards = document.querySelectorAll('.show');
+        // Get the number of the shown cards
+        let shownCards = document.querySelectorAll('.show');
 
-	       let matchedCards = null;
-	       
-	       if(shownCards.length === 2) {
-	       	   numberOfMoves += 1;
-	           let firstShownCardClass = shownCards[0].firstElementChild.className;
-	           let firstShowCardContent = firstShownCardClass.substring(firstShownCardClass.indexOf('fa-') + 3, firstShownCardClass.length + 1);
+        shownInfoCards.push({
+            index: element.id,
+            symbol: element.firstElementChild.classList.item(1).substring(3)
+        });
 
-	           let secondShownCardClass = shownCards[1].firstElementChild.className;
-	           let secondShownCardContent = secondShownCardClass.substring(secondShownCardClass.indexOf('fa-') + 3, secondShownCardClass.length + 1);
 
-	           if(firstShowCardContent === secondShownCardContent) {
-	           	  shownCards.forEach((shownCard) => {
-	           	  	   shownCard.classList.remove('open', 'show');
-	           	  	   shownCard.classList.add('animated', 'bounceIn', 'match');
+        let matchedCards = null;
 
-	           	  	   matchedCards = document.querySelectorAll('.match');
-	                   
-	                   if(matchedCards.length === numberOfCards) {
-			           	   showResults(numberOfMoves, numberOfStars);
-			           }
+        if (shownInfoCards.length === 2) {
 
-	           	  });
-	           }
-	           else {
 
-	              if(numberOfMoves % 5 === 0 && numberOfStars > 1) {
-	                   numberOfStars -= 1;
-	                   updateStars(numberOfStars);
-	              }
+            if (shownInfoCards.length > 0 && shownInfoCards[0].index !== shownInfoCards[1].index) {
 
-	           	  shownCards.forEach((shownCard) => {
-	           	  	   shownCard.classList.add('animated', 'shake', 'notmatch');
+                numberOfMoves += 1;
 
-	           	  	   setTimeout(function(currentCard) {
-	                      shownCard.classList.remove('open', 'show', 'animated', 'shake', 'notmatch');
-	                   }, 1000, shownCard);
-	           	  });
-	           }
+                if (shownInfoCards.length > 0 && shownInfoCards[0].symbol === shownInfoCards[1].symbol) {
+                    shownCards.forEach((shownCard) => {
+                        shownCard.classList.remove('open', 'show');
+                        shownCard.classList.add('animated', 'bounceIn', 'match');
 
-	           updateMoves(numberOfMoves);
+                        matchedCards = document.querySelectorAll('.match');
 
-	       }
-       }
-       
- }
+                        if (matchedCards.length === numberOfCards) {
+                            showResults(numberOfMoves, numberOfStars);
+                        }
+
+                    });
+                }
+                else {
+
+                    if (numberOfMoves % 5 === 0 && numberOfStars > 1) {
+                        numberOfStars -= 1;
+                        updateStars(numberOfStars);
+                    }
+
+                    shownCards.forEach((shownCard) => {
+                        shownCard.classList.add('animated', 'shake', 'notmatch');
+
+                        setTimeout(function (currentCard) {
+                            shownCard.classList.remove('open', 'show', 'animated', 'shake', 'notmatch');
+                        }, 1000, shownCard);
+                    });
+                }
+
+                updateMoves(numberOfMoves);
+                shownInfoCards = [];
+            }
+
+        }
+
+
+    }
+
+}
 
 
 
 function displayCards(cardList) {
-    
-   /**
-    * Creating the deck object
-    */
+
+    /**
+     * Creating the deck object
+     */
     let deck = document.querySelector('.deck');
 
 	/**
 	 * Displaying the Shuffled cards
 	 */
-	let displayedCards = deck.querySelectorAll('.card');
+    let displayedCards = deck.querySelectorAll('.card');
 
-    displayedCards.forEach( (displayedCard, index) => {
+    displayedCards.forEach((displayedCard, index) => {
 
-     /**
-      * Initialize the card, make them hidden and without any status
-      */
-     displayedCard.classList.remove('open', 'show', 'match', 'notmatch');
+        /**
+         * Initialize the card, make them hidden and without any status
+         */
+        displayedCard.id = index;
+        displayedCard.classList.remove('open', 'show', 'match', 'notmatch');
 
-     /**
-      * Give the Flipping effect to the cards if they don't have it
-      */
-     if(!displayedCard.classList.contains('rotate') && !displayedCard.classList.contains('flipper')) {
-     	  displayedCard.classList.add('rotate', 'flipper');
-     }
-     
-	 displayedCard.firstElementChild.className = "";
-     displayedCard.firstElementChild.classList.add('fa','fa-'+cardList[index]);
+        /**
+         * Give the Flipping effect to the cards if they don't have it
+         */
+        if (!displayedCard.classList.contains('rotate') && !displayedCard.classList.contains('flipper')) {
+            displayedCard.classList.add('rotate', 'flipper');
+        }
 
-     displayedCard.addEventListener('click', function(evt){
-            showCard(this);
-     });
-});
+        displayedCard.firstElementChild.className = "";
+        displayedCard.firstElementChild.classList.add('fa', 'fa-' + cardList[index]);
+
+    });
+}
+
+function assignCardEvents() {
+
+    /**
+     * Creating the deck object
+     */
+    let deck = document.querySelector('.deck');
+
+	/**
+	 * Displaying the Shuffled cards
+	 */
+    let displayedCards = deck.querySelectorAll('.card');
+
+    displayedCards.forEach((displayedCard, index) => {
+        console.log(displayedCard.className.indexOf('show'));
+        if (displayedCard.className.indexOf('show') === -1) {
+            displayedCard.addEventListener('click', function (evt) {
+                showCard(this);
+            });
+        }
+    });
 }
 
 // Starting the Game
 startTheGame();
+assignCardEvents();
 
 /*
  * set up the event listener for a card. If a card is clicked:
@@ -231,15 +282,14 @@ startTheGame();
  */
 
 
-document.querySelector('.restart').addEventListener('click', function(){
-	 startTheGame();
-	 startTime = new Date();
+document.querySelector('.restart').addEventListener('click', function () {
+    startTheGame();
+    startTime = new Date();
 });
 
-document.querySelector('#restart_game_btn').addEventListener('click', function(){
-	 startTheGame();
-	 startTime = new Date();
-	 document.querySelector('.modal-wrapper').classList.add('is-hidden'); 
+document.querySelector('#restart_game_btn').addEventListener('click', function () {
+    startTheGame();
+    startTime = new Date();
+    document.querySelector('.modal-wrapper').classList.add('is-hidden');
 });
-
 

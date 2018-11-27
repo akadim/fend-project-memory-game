@@ -137,3 +137,11 @@ h1 {
 .timer {
     margin-left: 10px;
 }
+
+.disabled {
+    pointer-events: none; 
+}
+
+.enabled {
+    pointer-events: all;
+}
